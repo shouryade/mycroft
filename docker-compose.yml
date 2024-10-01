@@ -1,0 +1,103 @@
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto
+    container_name: mosquitto-mqtt
+    ports:
+      - "1883:1883"  # MQTT port
+      - "9001:9001"  # WebSocket port
+    volumes:
+      - ./configs/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: on-failure
+
+  rabbitmq-broker:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.rabbitmq
+    container_name: rabbitmq-broker
+    ports:
+      - "5672:5672"  # AMQP protocol port
+      - "15672:15672"  # RabbitMQ management UI
+    healthcheck:
+      test: ["CMD", "curl","-f","http://localhost:15672"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    restart: on-failure
+  
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    ports:
+      - "5432:5432"  # PostgreSQL port
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./configs/postgres-init.sql:/docker-entrypoint-initdb.d/postgres-init.sql
+      - ./postgres-data:/var/lib/postgresql/data
+    restart: on-failure
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:11.2.1
+    user: "0:0"
+    environment:
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: postgres-db:5432
+      GF_DATABASE_NAME: postgres
+      GF_DATABASE_USER: postgres
+      GF_DATABASE_PASSWORD: postgres
+      GF_DATABASE_SSL_MODE: disable
+    restart: unless-stopped
+    depends_on:
+        - postgres-db
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana:/var/lib/grafana
+  
+  producer:    
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: producer
+    depends_on:
+      mqtt-broker:
+        condition: service_started
+      rabbitmq-broker:
+        condition: service_healthy
+    environment:
+      MQTT_BROKER: mqtt-broker
+      MQTT_BROKER_PORT: 1883
+      RABBITMQ_HOST: rabbitmq-broker
+      RABBITMQ_BROKER_PORT: 5672
+    ports:
+      - "65432:65432"  # TCP port 1
+      - "65433:65433"  # TCP port 2
+      - "8080:8080"    # HTTP port
+
+
+  consumer:
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile
+    container_name: consumer
+    depends_on:    
+      rabbitmq-broker:
+        condition: service_healthy
+      postgres-db:
+        condition: service_started
+    environment:      
+      RABBITMQ_QUEUE_NAME: "iot_queue"
+      RABBITMQ_HOST: rabbitmq-broker
+      RABBITMQ_BROKER_PORT: 5672
+      POSTGRES_DB_HOST: postgres-db
+      POSTGRES_DB_PORT: 5432      
+      DATABASE_URL: "postgresql://postgres:postgres@postgres-db:5432/postgres"
+    restart: on-failure
+
+volumes:
+  postgres-data:
+  grafana:
