@@ -63,9 +63,9 @@ python scripts/http_client.py
 python scripts/smoke_tcp.py
 ```
 
-## Load Graphana dashboard
+## Load Grafana dashboard
 open garphana interface at http://localhost:3000  
-load graphana dashboard by copying the graphana.json file ./configs 
+load grafana dashboard by copying the grafana.json file ./configs 
 
 ## Volumes
 - postgres-data: Stores PostgreSQL database data.
@@ -74,6 +74,37 @@ load graphana dashboard by copying the graphana.json file ./configs
 ## Monitoring
 - RabbitMQ Management UI: You can monitor the RabbitMQ queues and exchanges using the management UI at http://localhost:15672.
 - Grafana Dashboards: Visualize the smoke and CO sensor data with Grafana by creating dashboards and connecting to the PostgreSQL database.
+
+## Directory Structure
+.
+├── configs
+│   ├── graphana.json
+│   ├── mosquitto.conf
+│   └── postgres-init.sql
+├── consumer
+│   ├── consumer.py
+│   ├── Dockerfile
+│   ├── Pipfile
+│   └── Pipfile.lock
+├── docker-compose.yml
+├── dockerfiles
+│   └── Dockerfile.rabbitmq
+├── grafana (graphana files)
+├── playground
+│   ├── Pipfile
+│   ├── Pipfile.lock
+│   └── scripts
+│       ├── divij_mqtt.py
+│       ├── divij_tcp.py
+│       ├── http_client.py
+│       └── smoke_tcp.py
+├── postgres-data (postgres data is saved here. Use root user to access)
+├── README.md
+└── worker
+    ├── app.py
+    ├── Dockerfile
+    ├── Pipfile
+    └── Pipfile.lock
 
 ## Milestones
 - Set up an MQTT broker with Mosquitto.
