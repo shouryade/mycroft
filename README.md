@@ -64,6 +64,7 @@ python scripts/smoke_tcp.py
 ```
 
 ## Load Graphana dashboard
+open garphana interface at http://localhost:3000  
 load graphana dashboard by copying the graphana.json file ./configs 
 
 ## Volumes
