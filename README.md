@@ -15,7 +15,7 @@ This project is a multi-service application managed with Docker Compose. It incl
 6. **consumer**: A custom service built from a Dockerfile in the ./consumer directory. It consumes data from RabbitMQ, processes it, and stores it in the PostgreSQL database.
 
 ## Getting Started
-To get the application up and running, make sure Docker and Docker Compose are installed. Then follow these steps:  
+To get the application up and running, make sure [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) are installed. Then follow these steps:  
 
 1. Unzip the file.
 
