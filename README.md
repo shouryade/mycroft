@@ -76,35 +76,37 @@ load grafana dashboard by copying the grafana.json file ./configs
 - Grafana Dashboards: Visualize the smoke and CO sensor data with Grafana by creating dashboards and connecting to the PostgreSQL database.
 
 ## Directory Structure
+```nim
 .
-├── configs
-│   ├── graphana.json
-│   ├── mosquitto.conf
-│   └── postgres-init.sql
-├── consumer
-│   ├── consumer.py
-│   ├── Dockerfile
-│   ├── Pipfile
-│   └── Pipfile.lock
-├── docker-compose.yml
-├── dockerfiles
-│   └── Dockerfile.rabbitmq
-├── grafana (graphana files)
-├── playground
-│   ├── Pipfile
-│   ├── Pipfile.lock
-│   └── scripts
-│       ├── divij_mqtt.py
-│       ├── divij_tcp.py
-│       ├── http_client.py
-│       └── smoke_tcp.py
-├── postgres-data (postgres data is saved here. Use root user to access)
-├── README.md
-└── worker
-    ├── app.py
-    ├── Dockerfile
-    ├── Pipfile
-    └── Pipfile.lock
+├── configs  
+│   ├── graphana.json  
+│   ├── mosquitto.conf  
+│   └── postgres-init.sql  
+├── consumer  
+│   ├── consumer.py  
+│   ├── Dockerfile  
+│   ├── Pipfile  
+│   └── Pipfile.lock  
+├── docker-compose.yml  
+├── dockerfiles  
+│   └── Dockerfile.rabbitmq  
+├── grafana (grafana files)  
+├── playground  
+│   ├── Pipfile  
+│   ├── Pipfile.lock  
+│   └── scripts  
+│       ├── divij_mqtt.py  
+│       ├── divij_tcp.py  
+│       ├── http_client.py  
+│       └── smoke_tcp.py  
+├── postgres-data (postgres data is saved here. Use root user to access)  
+├── README.md  
+└── worker  
+    ├── app.py  
+    ├── Dockerfile  
+    ├── Pipfile  
+    └── Pipfile.lock  
+```
 
 ## Milestones
 - Set up an MQTT broker with Mosquitto.
