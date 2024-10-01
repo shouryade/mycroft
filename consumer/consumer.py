@@ -43,15 +43,34 @@ async def insert_data(pool, device, value):
         logging.info(f"Inserted {value} into {table_name}")
 
 
+async def insert_data_smoke(pool, device, value1, value2):
+    table_name = DEVICE_TABLE_MAP.get(device)
+
+    if not table_name:
+        print(f"Unknown device: {device}")
+        return
+
+    query = f"INSERT INTO {table_name} (smoke, co_level) VALUES ($1, $2)"
+    logging.info(query)
+
+    async with pool.acquire() as connection:
+        await connection.execute(query, value1, value2)
+        logging.info(f"Inserted {value1},{value2} into {table_name}")
+
+
 # Callback function for processing RabbitMQ messages
 async def process_message(pool, body):
     try:
         message = json.loads(body)
         device = message.get("device")
-        value = message.get("value")
-
         if device:
-            await insert_data(pool, device, float(value))
+            if device=='smoke_sensor':
+                value1 = message.get("value1")
+                value2 = message.get("value2")
+                await insert_data_smoke(pool,device,value1,value2)
+            else:
+                value = message.get("value")
+                await insert_data(pool, device, float(value))
         else:
             print(f"Invalid message format: {message}")
     except json.JSONDecodeError as e:

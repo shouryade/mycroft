@@ -14,7 +14,8 @@ CREATE TABLE humidity_sensor_data (
 );
 
 CREATE TABLE smoke_sensor_data (
-    value double precision NOT NULL,
+    smoke double precision NOT NULL,
+    co_level double precision NOT NULL,
     time timestamptz DEFAULT NOW()
 );
 

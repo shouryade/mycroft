@@ -40,6 +40,11 @@ def publish_message(device, value, channel):
         exchange="", routing_key=RABBITMQ_QUEUE_NAME, body=json.dumps(message)
     )
 
+def publish_message_smoke(device,value1,value2,channel):
+    message = {"device": device, "value1": value1, "value2":value2}
+    channel.basic_publish(
+        exchange="", routing_key=RABBITMQ_QUEUE_NAME, body=json.dumps(message)
+    )
 
 # --------------------------------------------- TCP Servers  ------------------------------------------------
 def start_temperature_server():
@@ -73,6 +78,20 @@ def handle_client(conn, sensor_type, channel):
                 logging.error("Connection reset by client.")
                 break
 
+def handle_client_smoke(conn, sensor_type, channel):
+    with conn:
+        while True:
+            try:
+                data = conn.recv(1024)
+                if not data:
+                    logging.warning("Client disconnected.")
+                    break
+                value = data.decode("utf-8").split(',')
+                publish_message_smoke(sensor_type, float(value[0]), float(value[1]), channel)
+            except ConnectionResetError:
+                logging.error("Connection reset by client.")
+                break
+
 
 def start_smoke_server():
     # Create a separate RabbitMQ connection and channel for this thread
@@ -86,7 +105,7 @@ def start_smoke_server():
         while True:
             conn, addr = s.accept()
             logging.info(f"Connected by {addr}")
-            handle_client(conn, "smoke_sensor", channel)
+            handle_client_smoke(conn, "smoke_sensor", channel)
 
     # Close connection after thread ends
     connection.close()
