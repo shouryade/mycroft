@@ -2,8 +2,9 @@
 
 A smart, multi-service monitoring system for seamless data analysis and visualization of various simulated IoT devices, inspired by the intelligence and precision of Sherlock’s brother.
 
-created for **RSE002-Engineer-Smart_Home_Integration_Assignment_Submission**
+Created for **RSE002-Engineer-Smart_Home_Integration_Assignment_Submission**
 
+This project is a multi-service application managed with Docker Compose. It includes the following services:
 This project is a multi-service application managed with Docker Compose. It includes the following services:
 
 1. **mqtt-broker**: This service uses the official eclipse-mosquitto image and provides an MQTT broker for managing publish/subscribe communication. It exposes ports 1883 for MQTT and 9001 for WebSocket connections.
@@ -13,12 +14,15 @@ This project is a multi-service application managed with Docker Compose. It incl
 3. **postgres-db**: This service runs a PostgreSQL database using the postgres:15-alpine image. It's used for persisting sensor data. The database is accessible on port 5432 and is pre-configured with initial data using a volume-mounted SQL script.
 
 4. **Grafana**: A Grafana instance used for visualizing the sensor data stored in the PostgreSQL database. It connects to the PostgreSQL service and is accessible on port 3000.
+5. **Grafana**: A Grafana instance used for visualizing the sensor data stored in the PostgreSQL database. It connects to the PostgreSQL service and is accessible on port 3000.
 
-5. **producer**: A custom service built from a Dockerfile in the ./worker directory. It simulates an IoT device that publishes sensor data (smoke and CO levels) to MQTT and RabbitMQ.
+6. **producer**: A custom service built from a Dockerfile in the ./worker directory. It simulates an IoT device that publishes sensor data (smoke and CO levels) to MQTT and RabbitMQ.
 
-6. **consumer**: A custom service built from a Dockerfile in the ./consumer directory. It consumes data from RabbitMQ, processes it, and stores it in the PostgreSQL database.
+7. **consumer**: A custom service built from a Dockerfile in the ./consumer directory. It consumes data from RabbitMQ, processes it, and stores it in the PostgreSQL database.
 
 ## Getting Started
+
+To get the application up and running, make sure [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) are installed. Then follow these steps:
 
 To get the application up and running, make sure [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) are installed. Then follow these steps:
 
@@ -26,8 +30,10 @@ To get the application up and running, make sure [Docker](https://docs.docker.co
 
 2. Navigate to the file
 
+3. Navigate to the file
+
 ```bash
-cd rosalie
+cd mycroft
 ```
 
 3. Build the service
@@ -40,9 +46,14 @@ docker compose up --build
 
 After running the application with Docker Compose, the following services will be available:
 
+After running the application with Docker Compose, the following services will be available:
+
 - MQTT Broker: Connect to the broker at mqtt://localhost:1883 for MQTT communication.
 - RabbitMQ Management UI: Access the RabbitMQ web interface at http://localhost:15672.
 - PostgreSQL Database: The PostgreSQL database will be running on localhost:5432 with the following credentials:
+  - Username: postgres
+  - Password: postgres
+  - Database: postgres
   - Username: postgres
   - Password: postgres
   - Database: postgres
@@ -55,6 +66,7 @@ Each service uses the following environment variables:
 - mqtt-broker: Configured via a custom mosquitto.conf file located in the ./configs/ directory.
 - rabbitmq-broker: Built from the Dockerfile.rabbitmq file in the ./dockerfiles/ directory.
 - postgres-db: The PostgreSQL database uses environment variables to configure the database name, user, and password.
+- Grafana: Grafana connects to the PostgreSQL database using environment variables specified in the docker-compose.yml file.
 - Grafana: Grafana connects to the PostgreSQL database using environment variables specified in the docker-compose.yml file.
 - producer: The producer service publishes data to MQTT and RabbitMQ. It uses environment variables for configuring the broker host and port.
 - consumer: The consumer service connects to RabbitMQ and PostgreSQL using environment variables to process and store sensor data.
@@ -82,10 +94,12 @@ python scripts/smoke_tcp.py
 
 open garphana interface at http://localhost:3000  
 load Grafana dashboard by copying the grafana.json file ./configs
+load Grafana dashboard by copying the grafana.json file ./configs
 
 ## Volumes
 
 - postgres-data: Stores PostgreSQL database data.
+- Grafana: Stores persistent Grafana data, such as dashboards and configurations.
 - Grafana: Stores persistent Grafana data, such as dashboards and configurations.
 
 ## Monitoring
@@ -97,6 +111,33 @@ load Grafana dashboard by copying the grafana.json file ./configs
 
 ```nim
 .
+├── configs
+│   ├── graphana.json
+│   ├── mosquitto.conf
+│   └── postgres-init.sql
+├── consumer
+│   ├── consumer.py
+│   ├── Dockerfile
+│   ├── Pipfile
+│   └── Pipfile.lock
+├── docker-compose.yml
+├── dockerfiles
+│   └── Dockerfile.rabbitmq
+├── grafana (Grafana files)
+├── playground
+│   ├── Pipfile
+│   ├── Pipfile.lock
+│   └── scripts
+│       ├── divij_mqtt.py
+│       ├── divij_tcp.py
+│       ├── http_client.py
+│       └── smoke_tcp.py
+├── README.md
+└── worker
+    ├── app.py
+    ├── Dockerfile
+    ├── Pipfile
+    └── Pipfile.lock
 ├── configs
 │   ├── graphana.json
 │   ├── mosquitto.conf
