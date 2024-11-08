@@ -1,4 +1,8 @@
-# RSE002-Engineer-Smart_Home_Integration_Assignment_Submission
+# Mycroft
+
+A smart, multi-service monitoring system for seamless data analysis and visualization of various simulated IoT devices, inspired by the intelligence and precision of Sherlock’s brother.
+
+created for **RSE002-Engineer-Smart_Home_Integration_Assignment_Submission**
 
 This project is a multi-service application managed with Docker Compose. It includes the following services:
 
