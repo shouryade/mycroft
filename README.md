@@ -1,4 +1,4 @@
-# RSE002-Engineer-Smart_H_Integration_Assignmentt_Submission-Divij_Goel
+# RSE002-Engineer-Smart_Home_Integration_Assignment_Submission
 
 This project is a multi-service application managed with Docker Compose. It includes the following services:
 
